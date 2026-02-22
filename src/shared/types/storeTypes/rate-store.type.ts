@@ -1,9 +1,9 @@
-import type { Rate } from "../rate.type"
+import type { RateOutput } from "../output/rate-output.type"
 
 
 
 export type rateStoreType = {
-    rates: Rate[] | null,
-    setRates: (rates: Rate[]) => void
-    addRate: (rate: Rate) => void
+    rates: RateOutput[] | null,
+    setRates: (rates: RateOutput[]) => void
+    addRate: (rate: RateOutput) => void
 }

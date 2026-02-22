@@ -1,14 +1,15 @@
-import type { Deposite } from "../deposite.type"
+
+import type { DepositeOutput } from "../output/deposite-output.type"
 
 
 
 export type depositeStoreType = {
-    deposites: Deposite[] | null,
-    selectedDeposite: Deposite | null,
+    deposites: DepositeOutput[] | null,
+    selectedDeposite: DepositeOutput | null,
     search: string,
     setSearch: (search: string) => void
-    setDeposites: (deposites: Deposite[]) => void
-    setSelectedDeposite: (deposite: Deposite) => void
-    addDeposite: (deposite: Deposite) => void
+    setDeposites: (deposites: DepositeOutput[]) => void
+    setSelectedDeposite: (deposite: DepositeOutput) => void
+    addDeposite: (deposite: DepositeOutput) => void
     deleteDeposite: (id: string) => void
 }

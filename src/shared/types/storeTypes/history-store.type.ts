@@ -1,8 +1,8 @@
-import type { History } from "../history.type"
+import type { HistoryOutput } from "../output/history-output.type"
 
 
 
 export type historyStoreType = {
-    history: History[] | null,
-    setHistory: (history: History[]) => void
+    history: HistoryOutput[] | null,
+    setHistory: (history: HistoryOutput[]) => void
 }

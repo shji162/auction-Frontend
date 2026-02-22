@@ -1,6 +1,5 @@
 import hosts  from "../index";
 import type { Deposite } from "../../shared/types/deposite.type";
-import type { updateDeposite } from "../../shared/types/update/deposite-update";
 import { setQuery } from "../../shared/utils/setQuery.util";
 
 export default new class depositesMethods {
@@ -23,7 +22,7 @@ export default new class depositesMethods {
         return await hosts.$depositesHost.get(id)
     }
 
-    async update(id: string, deposite: updateDeposite){
+    async update(id: string, deposite: string){
         return await hosts.$depositesHost.patch(id, deposite)
     }
 

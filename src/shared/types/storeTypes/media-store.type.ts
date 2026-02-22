@@ -1,10 +1,10 @@
-import type { Media } from "../media.type"
+import type { MediaOutput } from "../output/media-output.type"
 
 
 
 export type mediaStoreType = {
-    media: Media[] | null,
-    setMedia: (media: Media[]) => void
-    addMedia: (media: Media) => void
+    media: MediaOutput[] | null,
+    setMedia: (media: MediaOutput[]) => void
+    addMedia: (media: MediaOutput) => void
     deleteMedia: (id: string) => void
 }

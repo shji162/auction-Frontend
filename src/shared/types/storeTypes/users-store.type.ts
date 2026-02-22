@@ -1,11 +1,11 @@
-import type { User } from "../user.type"
+import type { UserOutput } from "../output/user-output.type"
 
 
 export type userStoreType = {
-    user: User | null
+    user: UserOutput | null
     isAuth: boolean
     isAdmin: boolean
-    setUser: (user: User | null) => void
+    setUser: (user: UserOutput | null) => void
     setAuth: (isAuth: boolean) => void
     setAdmin: (isAdmin: boolean) => void
 }

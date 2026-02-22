@@ -1,5 +1,6 @@
 import hosts  from "../index";
 import { setQuery } from "../../shared/utils/setQuery.util";
+import type { History } from "../../shared/types/history.type";
 
 export default new class historyMethods {
 

@@ -1,6 +1,5 @@
 import hosts  from "../index";
 import type { Media } from "../../shared/types/media.type";
-import type { updateMedia } from "../../shared/types/update/media-update";
 import { setQuery } from "../../shared/utils/setQuery.util";
 
 export default new class mediaMethods {
@@ -18,7 +17,7 @@ export default new class mediaMethods {
         return await hosts.$mediaHost.get(id)
     }
 
-    async update(id: string, media: updateMedia){
+    async update(id: string, media: string){
         return await hosts.$mediaHost.patch(id, media)
     }
 

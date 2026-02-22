@@ -1,5 +1,5 @@
 
 
 export type updateDeposite = {
-    deposite: number
+    deposite?: number
 }

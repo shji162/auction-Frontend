@@ -1,6 +1,6 @@
 import axios from "axios"
 import backendRoutes  from "../shared/consts/backendRoutes"
-import { requestInterceptor } from "./interceptors/auth.interceptor"
+import { requestInterceptor, resInterceptorError } from "./interceptors/auth.interceptor"
 
 export default new class hosts {
     private createHost(baseURL: string) {
@@ -10,6 +10,9 @@ export default new class hosts {
         })
         
         host.interceptors.request.use(requestInterceptor)
+        host.interceptors.response.use((config) => {
+            return config
+        }, resInterceptorError)
 
         return host
     }

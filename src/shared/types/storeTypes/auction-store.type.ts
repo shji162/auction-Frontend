@@ -1,13 +1,13 @@
-import type { Auction } from "../auction.type"
+import type { AuctionOutput } from "../output/auction-output.type"
 
 
 export type auctionStoreType = {
-    auctions: Auction[] | null,
-    selectedAuction: Auction | null,
+    auctions: AuctionOutput[] | null,
+    selectedAuction: AuctionOutput | null,
     search: string,
     setSearch: (search: string) => void
-    setAuctions: (auctions: Auction[]) => void
-    setSelectedAuction: (auction: Auction) => void
-    addAuction: (auction: Auction) => void
+    setAuctions: (auctions: AuctionOutput[]) => void
+    setSelectedAuction: (auction: AuctionOutput) => void
+    addAuction: (auction: AuctionOutput) => void
     deleteAuction: (id: string) => void
 }
