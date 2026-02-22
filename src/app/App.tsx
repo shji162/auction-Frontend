@@ -1,3 +1,5 @@
+import { BrowserRouter } from "react-router"
+import { AppRouter } from "./router"
 
 
 function App() {
@@ -5,7 +7,9 @@ function App() {
 
   return (
     <>
-      
+      <BrowserRouter>
+        <AppRouter/>
+      </BrowserRouter>
     </>
   )
 }
