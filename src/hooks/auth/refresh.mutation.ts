@@ -10,7 +10,7 @@ export const useUserCheckMutation = () => {
      const mutation = useMutation({
         mutationFn: async() => {
             const response = await auth.refresh()
-            localStorage.setItem('token', response.data.accessToken);
+            localStorage.setItem('token', response.data.tokens.accessToken);
             setAuth(true);
             setUser(response.data.user);  
     }})

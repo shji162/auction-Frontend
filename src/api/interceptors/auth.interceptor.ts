@@ -5,7 +5,7 @@ import hosts from "../index"
 
 export const requestInterceptor = (config: any) => { 
     try {
-        const accessToken = localStorage.getItem('accessToken')
+        const accessToken = localStorage.getItem('token')
 
         if(accessToken){
             config.headers.Authorization = `Bearer ${accessToken}`
@@ -23,7 +23,7 @@ export const resInterceptorError = async (error: any) => {
         originalReq._isRetry = true
         try {
             const tokens = await auth.refresh()
-            localStorage.setItem('token', tokens.data.accessToken)
+            localStorage.setItem('accesstoken', tokens.data.accessToken)
             return hosts.$authHost.request(originalReq)
         } catch (error) {
             

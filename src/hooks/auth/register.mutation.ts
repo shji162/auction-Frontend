@@ -12,8 +12,8 @@ export const useUserCreateMutation = () => {
      const mutation = useMutation({
         mutationFn: async(user: User) => {
            const res = await auth.register({...user, role: Roles.USER})
-           if(res.data.accessToken || res.data.refreshToken){
-            localStorage.setItem('token', res.data.accessToken)
+           if(res.data.tokens.accessToken || res.data.tokens.refreshToken){
+            localStorage.setItem('token', res.data.tokens.accessToken)
             setAuth(true)
             setUser(res.data.user)
            }
