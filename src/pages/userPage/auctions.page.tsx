@@ -130,17 +130,12 @@ export const UserAuctions = () => {
                         Переход к странице аукциона и продолжению участия в торгах.
                       </p>
                     </div>
-                    <StatusBadge status={item.status} />
                   </div>
 
                   <div className={styles.cardItemMeta}>
                     <div>
                       <span className={styles.cardItemLabel}>ID пользователя</span>
                       <div className={styles.cardItemValue}>{item.userId}</div>
-                    </div>
-                    <div>
-                      <span className={styles.cardItemLabel}>Статус участия</span>
-                      <div className={styles.cardItemValue}>{getStatusLabel(item.status)}</div>
                     </div>
                     <div>
                       <span className={styles.cardItemLabel}>Тип записи</span>

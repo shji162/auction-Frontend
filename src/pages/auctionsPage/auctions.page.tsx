@@ -6,7 +6,7 @@ import { useAuctionCreateMutation } from "../../hooks/auctions/auction-create.mu
 import { useMediaCreateMutation } from "../../hooks/media/media-create.mutation"
 import { useAuctionsQuery } from "../../hooks/auctions/auctions.query"
 import type { AuctionOutput } from "../../shared/types/output/auction-output.type"
-import { auctionsPage, auctionPage } from "../../shared/consts/routes"
+import { auctionPage } from "../../shared/consts/routes"
 import { useAuctions } from "../../store/auctions.store"
 import { useUsers } from "../../store/users.store"
 
