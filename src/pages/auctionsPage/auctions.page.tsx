@@ -32,6 +32,8 @@ const AuctionCard = ({ auction }: AuctionCardProps) => {
 
   const [timeLeft, setTimeLeft] = useState<string>("")
 
+  timeLeft+1;
+
   useEffect(() => {
     const target = new Date(auction.expiresIn)
     if (Number.isNaN(target.getTime())) {
