@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 
 
 export const useUserCreateMutation = () => {
-        const {setAuth, setUser} = useUsers((state) => state)
+        const {setAuth, setUser, setAdmin} = useUsers((state) => state)
      const mutation = useMutation({
         mutationFn: async(user: User) => {
            const res = await auth.register({...user, role: Roles.USER})
@@ -16,6 +16,7 @@ export const useUserCreateMutation = () => {
             localStorage.setItem('token', res.data.tokens.accessToken)
             setAuth(true)
             setUser(res.data.user)
+            setAdmin(res.data.user.role === Roles.ADMIN)
            }
            return res
         }

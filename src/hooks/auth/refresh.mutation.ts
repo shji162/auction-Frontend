@@ -5,14 +5,15 @@ import auth from "../../api/endpoints/auth";
 
 
 export const useUserCheckMutation = () => {
-    const {setAuth, setUser} = useUsers((state) => state)
+    const {setAuth, setUser, setAdmin} = useUsers((state) => state)
     
      const mutation = useMutation({
         mutationFn: async() => {
             const response = await auth.refresh()
-            localStorage.setItem('token', response.data.tokens.accessToken);
+            localStorage.setItem('token', response.data.accessToken);
             setAuth(true);
-            setUser(response.data.user);  
+            setUser(response.data.user);
+            setAdmin(response.data.user.role === 'ADMIN')
     }})
     
 

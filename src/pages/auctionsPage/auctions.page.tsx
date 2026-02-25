@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router"
 
 import { useAuctionCreateMutation } from "../../hooks/auctions/auction-create.mutation"
+import { useMediaCreateMutation } from "../../hooks/media/media-create.mutation"
 import { useAuctionsQuery } from "../../hooks/auctions/auctions.query"
 import type { AuctionOutput } from "../../shared/types/output/auction-output.type"
 import { auctionsPage, auctionPage } from "../../shared/consts/routes"
@@ -16,8 +17,10 @@ type CreateAuctionFormValues = {
   description: string
   minPrice: number
   priceStep: number
+  depositAmount: number
   expiresIn: string
   category: string
+  media?: FileList
 }
 
 type AuctionCardProps = {
@@ -26,6 +29,39 @@ type AuctionCardProps = {
 
 const AuctionCard = ({ auction }: AuctionCardProps) => {
   const targetUrl = auctionPage.replace(":id", auction.id)
+
+  const [timeLeft, setTimeLeft] = useState<string>("")
+
+  useEffect(() => {
+    const target = new Date(auction.expiresIn)
+    if (Number.isNaN(target.getTime())) {
+      setTimeLeft("—")
+      return
+    }
+
+    const update = () => {
+      const diff = target.getTime() - Date.now()
+      if (diff <= 0) {
+        setTimeLeft("00:00:00")
+        return
+      }
+      const totalSeconds = Math.floor(diff / 1000)
+      const hours = Math.floor(totalSeconds / 3600)
+      const minutes = Math.floor((totalSeconds % 3600) / 60)
+      const seconds = totalSeconds % 60
+
+      setTimeLeft(
+        `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+      )
+    }
+
+    update()
+    const id = window.setInterval(update, 1000)
+
+    return () => window.clearInterval(id)
+  }, [auction.expiresIn])
 
   return (
     <Link to={targetUrl} className={styles.cardItem}>
@@ -55,6 +91,10 @@ const AuctionCard = ({ auction }: AuctionCardProps) => {
           <span className={styles.cardItemValue}>{auction.priceStep.toLocaleString()} ₽</span>
         </div>
         <div className={styles.cardItemMetaBlock}>
+          <span className={styles.cardItemLabel}>Депозит</span>
+          <span className={styles.cardItemValue}>{auction.depositAmount.toLocaleString()} ₽</span>
+        </div>
+        <div className={styles.cardItemMetaBlock}>
           <span className={styles.cardItemLabel}>До завершения</span>
           <span className={styles.cardItemValue}>{auction.expiresIn}</span>
         </div>
@@ -68,6 +108,7 @@ export const Auctions = () => {
   const { auctions, search, setSearch } = useAuctions((state) => state)
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [mediaFile, setMediaFile] = useState<File | null>(null)
 
   const {
     register,
@@ -80,12 +121,14 @@ export const Auctions = () => {
       description: "",
       minPrice: 0,
       priceStep: 0,
+      depositAmount: 0,
       expiresIn: "",
       category: "",
     },
   })
 
   const createMutation = useAuctionCreateMutation()
+  const mediaMutation = useMediaCreateMutation()
 
   useAuctionsQuery(search)
 
@@ -95,6 +138,7 @@ export const Auctions = () => {
       description: "",
       minPrice: 0,
       priceStep: 0,
+      depositAmount: 0,
       expiresIn: "",
       category: "",
     })
@@ -105,8 +149,27 @@ export const Auctions = () => {
     setIsCreateOpen(false)
   }
 
-  const onCreateSubmit = (values: CreateAuctionFormValues) => {
+  const fileToBase64 = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = (error) => reject(error)
+      reader.readAsDataURL(file)
+    })
+
+  const onCreateSubmit = async (values: CreateAuctionFormValues) => {
     if (!user?.id) return
+
+    const expiresDate = new Date(values.expiresIn)
+
+    let mediaBase64: string | null = null
+    if (mediaFile) {
+      try {
+        mediaBase64 = await fileToBase64(mediaFile)
+      } catch {
+        mediaBase64 = null
+      }
+    }
 
     createMutation.mutate(
       {
@@ -115,11 +178,19 @@ export const Auctions = () => {
         description: values.description,
         minPrice: Number(values.minPrice),
         priceStep: Number(values.priceStep),
-        expiresIn: values.expiresIn,
+        depositAmount: Number(values.depositAmount),
+        expiresIn: expiresDate,
         category: values.category,
       },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
+          if (mediaBase64 && res?.data?.id) {
+            mediaMutation.mutate({
+              auctionId: res.data.id,
+              media: mediaBase64,
+            })
+          }
+          setMediaFile(null)
           closeCreate()
         },
       },
@@ -129,17 +200,6 @@ export const Auctions = () => {
   const apiError =
     (createMutation.error as any)?.response?.data?.message ?? "Произошла ошибка. Попробуйте ещё раз."
 
-  if(!user) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.card}>
-          <h1 className={styles.title}>Аукционы</h1>
-          <p className={styles.subtitle}>Вы не авторизованы. Войдите, чтобы просматривать аукционы.</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className={styles.page}>
       <div className={styles.card}>
@@ -148,7 +208,8 @@ export const Auctions = () => {
             <p className={styles.badge}>Маркет аукционов</p>
             <h1 className={styles.title}>Активные аукционы</h1>
             <p className={styles.subtitle}>
-              Находите интересующие вас лоты и участвуйте в торгах в один клик.
+              Находите интересующие вас лоты и участвуйте в торгах в один клик. Гости могут просматривать
+              аукционы, но для участия требуется авторизация.
             </p>
           </div>
 
@@ -160,14 +221,16 @@ export const Auctions = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <button
-              type="button"
-              className={styles.primaryButton}
-              onClick={openCreate}
-              disabled={createMutation.isPending}
-            >
-              Создать аукцион
-            </button>
+            {user && (
+              <button
+                type="button"
+                className={styles.primaryButton}
+                onClick={openCreate}
+                disabled={createMutation.isPending}
+              >
+                Создать аукцион
+              </button>
+            )}
           </div>
         </header>
 
@@ -274,6 +337,26 @@ export const Auctions = () => {
                 </div>
               </div>
 
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="depositAmount">
+                  Размер депозита для участия
+                </label>
+                <input
+                  id="depositAmount"
+                  type="number"
+                  min={0}
+                  className={styles.input}
+                  {...register("depositAmount", {
+                    required: "Укажите размер депозита",
+                    min: {
+                      value: 0,
+                      message: "Сумма не может быть отрицательной",
+                    },
+                  })}
+                />
+                {errors.depositAmount && <p className={styles.error}>{errors.depositAmount.message}</p>}
+              </div>
+
               <div className={styles.fieldRow}>
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="expiresIn">
@@ -281,9 +364,8 @@ export const Auctions = () => {
                   </label>
                   <input
                     id="expiresIn"
-                    type="text"
+                    type="datetime-local"
                     className={styles.input}
-                    placeholder="Например, 2026-03-01T18:00"
                     {...register("expiresIn", {
                       required: "Укажите время завершения",
                     })}
@@ -326,6 +408,19 @@ export const Auctions = () => {
                 >
                   {createMutation.isPending ? "Создаём..." : "Создать аукцион"}
                 </button>
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="media">
+                  Медиа (фото или видео)
+                </label>
+                <input
+                  id="media"
+                  type="file"
+                  accept="image/*,video/*"
+                  className={styles.input}
+                  onChange={(e) => setMediaFile(e.target.files?.[0] ?? null)}
+                />
               </div>
             </form>
           </div>

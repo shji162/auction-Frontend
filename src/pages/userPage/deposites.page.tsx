@@ -87,6 +87,10 @@ const DepositeCard = ({ deposite }: DepositeCardProps) => {
           <p className={styles.cardItemLabel}>Депозит</p>
           <p className={styles.cardItemValueStrong}>{deposite.deposite.toLocaleString()} ₽</p>
         </div>
+        <div>
+          <p className={styles.cardItemLabel}>Статус</p>
+          <p className={styles.cardItemValue}>{deposite.status}</p>
+        </div>
       </div>
 
       <div className={styles.cardItemActions}>

@@ -11,7 +11,7 @@ export default new class backendRoutes {
     historyRoute = this.mainRoute + "history/"
 
     emailConfirmationRoute = "email-confirmation"
-    passwordRecoveryRoute =  "password-recovery"
+    passwordRecoveryRoute =  "password-recovery/"
     registerRoute = "register"
     loginRoute = "login"
     refreshRoute = "refresh"

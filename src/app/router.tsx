@@ -1,11 +1,18 @@
 import { Route, Routes } from "react-router"
 import { adminRoutes, authRoutes, publicRoutes } from "../shared/consts/routes"
 import { useUsers } from "../store/users.store"
+import { useUserCheckMutation } from "../hooks/auth/refresh.mutation"
+import { useEffect } from "react"
 
 
 export const AppRouter = () => {
 
+    const refresh = useUserCheckMutation()
     const {isAuth, isAdmin} = useUsers((state) => state)
+
+    useEffect(() => {
+        refresh.mutate()
+    }, [])
 
 
     return (

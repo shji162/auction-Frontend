@@ -1,12 +1,10 @@
-
-
-
 export type Auction = {
-    userId: string
-    name: string
-    description: string
-    minPrice: number
-    priceStep: number 
-    expiresIn: string
-    category: string
-}
+  userId: string;
+  name: string;
+  description: string;
+  minPrice: number;
+  priceStep: number;
+  depositAmount: number;
+  expiresIn: Date;
+  category: string;
+};

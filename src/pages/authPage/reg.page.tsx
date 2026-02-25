@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router"
 
@@ -14,6 +15,8 @@ type RegisterFormValues = {
 }
 
 export const Register = () => {
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -27,6 +30,12 @@ export const Register = () => {
   })
 
   const registerMutation = useUserCreateMutation()
+
+  useEffect(() => {
+    if (registerMutation.isSuccess) {
+      setIsSuccessModalOpen(true)
+    }
+  }, [registerMutation.isSuccess])
 
   const onSubmit = (values: RegisterFormValues) => {
     registerMutation.mutate({
@@ -140,6 +149,26 @@ export const Register = () => {
           </Link>
         </footer>
       </div>
+
+      {isSuccessModalOpen && (
+        <div className={styles.backdrop} onClick={() => setIsSuccessModalOpen(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <header className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>Подтвердите e-mail</h2>
+              <button
+                type="button"
+                className={styles.closeButton}
+                onClick={() => setIsSuccessModalOpen(false)}
+              >
+                ✕
+              </button>
+            </header>
+            <p className={styles.modalText}>
+              на ваш e-mail аддрес отправлено письмо, пожалйста подтвердите свой аккаунт
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

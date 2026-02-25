@@ -12,7 +12,7 @@ type ProfileFormValues = {
 }
 
 export const User = () => {
-  const { user } = useUsers((state) => state)
+  const { user, setUser } = useUsers((state) => state)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const {
@@ -58,6 +58,11 @@ export const User = () => {
       },
       {
         onSuccess: () => {
+          setUser({
+            ...user,
+            name: values.name,
+            email: values.email,
+          } as any)
           closeModal()
         },
       },
@@ -67,7 +72,7 @@ export const User = () => {
   const apiError =
     (updateMutation.error as any)?.response?.data?.message ?? "Произошла ошибка. Попробуйте ещё раз."
 
-  /*if (!user) {
+  if (!user) {
     return (
       <div className={styles.page}>
         <div className={styles.card}>
@@ -76,7 +81,7 @@ export const User = () => {
         </div>
       </div>
     )
-  }*/
+  }
 
   return (
     <div className={styles.page}>
@@ -98,11 +103,11 @@ export const User = () => {
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
             <span className={styles.infoLabel}>Имя</span>
-            <span className={styles.infoValue}>{"test"}</span>
+            <span className={styles.infoValue}>{user.name}</span>
           </div>
           <div className={styles.infoItem}>
             <span className={styles.infoLabel}>Email</span>
-            <span className={styles.infoValue}>{"email"}</span>
+            <span className={styles.infoValue}>{user.email}</span>
           </div>
         </div>
       </div>

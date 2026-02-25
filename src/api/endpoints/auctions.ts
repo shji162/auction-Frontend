@@ -17,7 +17,15 @@ export default new class auctionsMethods {
         return await hosts.$auctionsHost.get(query)
     }
 
+    async getAllAdmin() {
+        return await hosts.$auctionsHost.get('all')
+    }
+
     async delete(id: string){
         return await hosts.$auctionsHost.delete(id)
+    }
+
+    async finish(id: string) {
+        return await hosts.$auctionsHost.patch(`${id}/finish`)
     }
 }
