@@ -3,37 +3,10 @@ import { Link } from "react-router"
 
 import { useHistoryByAuctionIdQuery } from "../../hooks/history/historyByAuctionId.query"
 import { auctionPage } from "../../shared/consts/routes"
-import type { Status } from "../../shared/types/enums/auction-status.enum"
 import { useHistory } from "../../store/history.store"
 import { useUsers } from "../../store/users.store"
 
 import styles from "./auctions.page.module.css"
-
-const getStatusLabel = (status: Status) => {
-  switch (status) {
-    case "WIN":
-      return "Вы выиграли аукцион"
-    case "LOSE":
-      return "Вы не выиграли аукцион"
-    default:
-      return status
-  }
-}
-
-type StatusBadgeProps = {
-  status: Status
-}
-
-const StatusBadge = ({ status }: StatusBadgeProps) => {
-  const isWin = status === "WIN"
-
-  return (
-    <span className={`${styles.statusBadge} ${isWin ? styles.statusActive : styles.statusFinished}`}>
-      <span className={styles.statusDot} />
-      {getStatusLabel(status)}
-    </span>
-  )
-}
 
 export const UserAuctions = () => {
   const { user } = useUsers((state) => state)
